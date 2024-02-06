@@ -5,18 +5,18 @@ namespace Specs.Repositories;
 public class JsonFileMarketRepositoryTest
 {
     [Test]
-    public void Should_properly_load_markets()
+    public async Task Should_properly_load_markets()
     {
         var repo = new JsonFileMarketRepository();
-        var markets = repo.List();
+        var markets = await repo.ListAsync();
         Assert.That(markets.Count, Is.EqualTo(94));
     }
 
     [Test]
-    public void Should_properly_return_market_of_enfants_rouge()
+    public async Task Should_properly_return_market_of_enfants_rouge()
     {
         var repo = new JsonFileMarketRepository();
-        var markets = repo.GetFromAGivenBorough(75003);
+        var markets = await repo.GetFromAGivenBoroughAsync(75003);
         Assert.That(markets.Count, Is.EqualTo(1));
         var market = markets.Single(m => m.MarketName == "Marché Enfants rouges");
         Assert.NotNull(market);
