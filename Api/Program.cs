@@ -2,6 +2,7 @@ using Api.Repositories;
 using Api.Repositories.Abstractions;
 using Api.Serialization;
 using Asp.Versioning;
+using Asp.Versioning.ApiExplorer;
 using Microsoft.AspNetCore.HttpLogging;
 using Microsoft.Net.Http.Headers;
 using Newtonsoft.Json;
@@ -36,6 +37,9 @@ public class Program
             options.AssumeDefaultVersionWhenUnspecified = true;
             options.DefaultApiVersion = new ApiVersion(1, 0);
             options.ReportApiVersions = true;
+            options.ApiVersionReader = ApiVersionReader.Combine(new UrlSegmentApiVersionReader(),
+                new HeaderApiVersionReader("x-api-version"),
+                new MediaTypeApiVersionReader("x-api-version"));
         }).AddApiExplorer(
             options =>
             {
@@ -48,6 +52,7 @@ public class Program
                 options.SubstituteApiVersionInUrl = true;
             });
 
+        builder.Services.ConfigureOptions<ConfigureSwaggerOptions>();
         SetGlobalJsonSettings();
         builder.Services.AddControllers(options =>
             {
@@ -65,15 +70,24 @@ public class Program
         // Configure the HTTP request pipeline.
         if (app.Environment.IsDevelopment())
         {
+
+            var apiVersionDescriptionProvider = app.Services.GetRequiredService<IApiVersionDescriptionProvider>();
+
             app.UseSwagger();
-            app.UseSwaggerUI();
+            app.UseSwaggerUI(options =>
+            {
+                foreach (var description in apiVersionDescriptionProvider.ApiVersionDescriptions)
+                {
+                    options.SwaggerEndpoint($"/swagger/{description.GroupName}/swagger.json",
+                        description.GroupName.ToUpperInvariant());
+                }
+            });
         }
 
         app.UseHttpLogging();
         app.UseHttpsRedirection();
 
         app.UseAuthorization();
-
 
         app.MapControllers();
 

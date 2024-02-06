@@ -1,6 +1,48 @@
-@SerializationPlayground_HostAddress = http://localhost:5044
+@api_Address = https://localhost:7136
 
-GET {{SerializationPlayground_HostAddress}}/weatherforecast/
+// Get Borough of Paris with default serialization strategy camelCase
+GET {{api_Address}}/api/boroughs
 Accept: application/json
 
 ###
+
+// Get Borough of Paris with strategy as url parameters => snakeCase
+GET {{api_Address}}/api/boroughs?jsonCaseStrategy=snakeCase
+Accept: application/json
+
+### 
+
+// Get Borough of Paris with strategy as url parameters, if strategy not found => default on camelCase
+GET {{api_Address}}/api/boroughs?jsonCaseStrategy=totoStrategy
+Accept: application/json
+
+### 
+
+// Get Borough of Paris with strategy as url parameters , param is case insensitive
+GET {{api_Address}}/api/boroughs?jsonCaseStrategy=KEBABCASE
+Accept: application/json
+
+### 
+
+// Get Borough of Paris with strategy as header
+GET {{api_Address}}/api/boroughs
+Accept: application/json
+x-json-case-strategy: pascalCase
+
+### 
+
+// Get light Borough of Paris with strategy as JsonAttribute on the class
+GET {{api_Address}}/api/boroughs/light
+Accept: application/json
+
+### 
+
+// Get market of paris with default serializer
+GET {{api_Address}}/api/markets
+Accept: application/json
+
+### 
+
+// Get market of paris with forced attribut serializer as snakeCase
+GET {{api_Address}}/api/v2/markets
+Accept: application/json

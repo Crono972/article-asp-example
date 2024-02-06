@@ -30,10 +30,10 @@ public static class NewtonsoftNamingStrategyProvider
     {
         return strategy switch
         {
-            "snakecase" => SnakeCaseSettings,
-            "camelcase" => CamelCaseSettings,
-            "kebabcase" => KebabCaseSettings,
-            "pascalcase" => PascalCaseSettings,
+            SerializationStrategy.SnakeCase => SnakeCaseSettings,
+            SerializationStrategy.CamelCase => CamelCaseSettings,
+            SerializationStrategy.KebabCase => KebabCaseSettings,
+            SerializationStrategy.PascalCase => PascalCaseSettings,
             _ => CamelCaseSettings //default strategy
         };
     }
